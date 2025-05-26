@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import express from 'express';
 import { handleIdentifyRequest } from '@/controllers/contactController';
 
-const router = Router();
+const router = express.Router();
 
 router.post('/identify', handleIdentifyRequest);
 
