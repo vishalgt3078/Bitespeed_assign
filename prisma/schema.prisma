@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", "sqlserver", "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id             Int       @id @default(autoincrement())
+  phoneNumber    String?
+  email          String?
+  linkedId       Int?      // Foreign key to another Contact
+  linkPrecedence LinkPrecedence @default(PRIMARY)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime? // For soft deletes, if needed in the future
+
+  // Self-relation for linkedId
+  linkedContact  Contact?  @relation("ContactLinks", fields: [linkedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  linkedFrom     Contact[] @relation("ContactLinks")
+
+  @@index([email])
+  @@index([phoneNumber])
+  @@index([linkedId])
+}
+
+enum LinkPrecedence {
+  PRIMARY
+  SECONDARY
+}
